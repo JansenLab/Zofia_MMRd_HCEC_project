@@ -1,0 +1,62 @@
+#!/bin/bash
+#$ -cwd
+#$ -V
+#$ -l tmem=12G
+#$ -l h_vmem=12G
+#$ -l h_rt=12:0:0
+#$ -R y
+#$ -j y
+#$ -N kmetstat_counts_array
+#$ -t 1-16
+#$ -o /SAN/colcc/MMRd_HCEC_genomes/cuttag_batch2/kmetstat/reports/kmetstat_counts_array_trimmed2.out 
+
+source /SAN/colcc/MMRd_HCEC_genomes/myCOLCCenv.sh 
+
+# Adjust array index (SGE_TASK_ID starts from 1, arrays from 0)
+tid=$((SGE_TASK_ID - 1))
+
+# Set working directories
+DIR="/SAN/colcc/MMRd_HCEC_genomes/cuttag_batch2/adapter_trimming/output"
+OUTDIR="/SAN/colcc/MMRd_HCEC_genomes/cuttag_batch2/kmetstat/output_trimmed"
+
+# List input files as an array
+files=($DIR/*/*_1.trimmed.fq)
+
+# Check if index is valid
+if [[ $tid -ge ${#files[@]} ]]; then
+    echo "Error: Index $tid is out of range (max: ${#files[@]})"
+    exit 1
+fi
+
+# Get the sample file
+sample=${files[$tid]}
+
+# Extract sample ID (common for paired _1 and _2 files)
+sampleID=$(basename "$sample" _1.fq)
+
+# Find matching read files
+read1=$(find "$DIR" -type f -name "${sampleID}_1.fq")
+read2=$(find "$DIR" -type f -name "${sampleID}_2.fq")
+
+# Ensure files exist
+if [[ ! -f "$read1" || ! -f "$read2" ]]; then
+    echo "Error: Missing read files for sample $sampleID"
+    exit 1
+fi
+
+samplename=$(basename "$read1" _1.fq)
+
+echo "$(basename $read1)" > "$samplename"_R1.txt
+for barcode in TTCGCGCGTAACGACGTACCGT CGCGATACGACCGCGTTACGCG CGACGTTAACGCGTTTCGTACG CGCGACTATCGCGCGTAACGCG CCGTACGTCGTGTCGAACGACG CGATACGCGTTGGTACGCGTAA TAGTTCGCGACACCGTTCGTCG TCGACGCGTAAACGGTACGTCG TTATCGCGTCGCGACGGACGTA CGATCGTACGATAGCGTACCGA CGCATATCGCGTCGTACGACCG ACGTTCGACCGCGGTCGTACGA ACGATTCGACGATCGTCGACGA CGATAGTCGCGTCGCACGATCG CGCCGATTACGTGTCGCGCGTA ATCGTACCGCGCGTATCGGTCG CGTTCGAACGTTCGTCGACGAT TCGCGATTACGATGTCGCGCGA ACGCGAATCGTCGACGCGTATA CGCGATATCACTCGACGCGATA CGCGAAATTCGTATACGCGTCG CGCGATCGGTATCGGTACGCGC GTGATATCGCGTTAACGTCGCG TATCGCGCGAAACGACCGTTCG CCGCGCGTAATGCGCGACGTTA CCGCGATACGACTCGTTCGTCG GTCGCGAACTATCGTCGATTCG CCGCGCGTATAGTCCGAGCGTA CGATACGCCGATCGATCGTCGG CCGCGCGATAAGACGCGTAACG CGATTCGACGGTCGCGACCGTA TTTCGACGCGTCGATTCGGCGA ;
+do
+    grep -c $barcode "$read1" >> "$samplename"_R1.txt  
+done
+
+echo "$(basename $read2)" > "$samplename"_R2.txt
+for barcode in TTCGCGCGTAACGACGTACCGT CGCGATACGACCGCGTTACGCG CGACGTTAACGCGTTTCGTACG CGCGACTATCGCGCGTAACGCG CCGTACGTCGTGTCGAACGACG CGATACGCGTTGGTACGCGTAA TAGTTCGCGACACCGTTCGTCG TCGACGCGTAAACGGTACGTCG TTATCGCGTCGCGACGGACGTA CGATCGTACGATAGCGTACCGA CGCATATCGCGTCGTACGACCG ACGTTCGACCGCGGTCGTACGA ACGATTCGACGATCGTCGACGA CGATAGTCGCGTCGCACGATCG CGCCGATTACGTGTCGCGCGTA ATCGTACCGCGCGTATCGGTCG CGTTCGAACGTTCGTCGACGAT TCGCGATTACGATGTCGCGCGA ACGCGAATCGTCGACGCGTATA CGCGATATCACTCGACGCGATA CGCGAAATTCGTATACGCGTCG CGCGATCGGTATCGGTACGCGC GTGATATCGCGTTAACGTCGCG TATCGCGCGAAACGACCGTTCG CCGCGCGTAATGCGCGACGTTA CCGCGATACGACTCGTTCGTCG GTCGCGAACTATCGTCGATTCG CCGCGCGTATAGTCCGAGCGTA CGATACGCCGATCGATCGTCGG CCGCGCGATAAGACGCGTAACG CGATTCGACGGTCGCGACCGTA TTTCGACGCGTCGATTCGGCGA ;
+do
+    grep -c $barcode "$read2" >> "$samplename"_R2.txt
+done 
+
+# Paste both reads into a single file
+paste "$samplename"_R1.txt "$samplename"_R2.txt | column -t > "$samplename"_bc_counts.txt
