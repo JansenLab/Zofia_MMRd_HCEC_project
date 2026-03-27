@@ -1,0 +1,14 @@
+#!/bin/bash
+#$ -cwd
+#$ -l tmem=16G
+#$ -l h_vmem=16G
+#$ -l h_rt=72:0:0
+#$ -pe smp 6
+#$ -N SP_topography_SBS
+#$ -R y
+#$ -j y
+
+source /share/apps/source_files/python/python-3.10.0.source
+source ./sigprofiler_env/bin/activate
+
+python3 SP_topography_SBS.py
