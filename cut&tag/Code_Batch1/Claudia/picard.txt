@@ -1,0 +1,24 @@
+#Make sure you create a TMP directory first
+mkdir /rds/path/to/ephemeral/TMP
+
+#set working directories
+DIR=/rds/general/user/css119/ephemeral/CT_023/alignment
+PICARD=/rds/general/user/css119/home/anaconda3/pkgs/picard-2.27.4-hdfd78af_0/share/picard-2.27.4-0/picard.jar
+ephem=/rds/path /to/ephemeral
+
+#list your input files
+files=$(ls $DIR/sam/*_bowtie2.sam)
+arr=($files)
+sample=${arr[$tid]}
+
+#creating sampleID
+sampleID=$(echo `basename $sample _bowtie2.sam`)
+
+## Sort by coordinate
+java -jar $PICARD SortSam I=$DIR/sam/"$sampleID"_bowtie2.sam O=$DIR/sam/"$sampleID"_bowtie2.sorted.sam SORT_ORDER=coordinate
+
+## mark duplicates
+java -jar $PICARD MarkDuplicates I=$DIR/sam/"$sampleID"_bowtie2.sorted.sam O=$DIR/removeDuplicate/"$sampleID"_bowtie2.sorted.dupMarked.sam METRICS_FILE=$DIR/removeDuplicate/picard_summary/"$sampleID"_picard.dupMark.txt TMP_DIR=$ephem/TMP
+
+## remove duplicates
+java -jar $PICARD MarkDuplicates I=$DIR/sam/"$sampleID"_bowtie2.sorted.sam O=$DIR/removeDuplicate/"$sampleID"_bowtie2.sorted.rmDup.sam REMOVE_DUPLICATES=true METRICS_FILE=$DIR/removeDuplicate/picard_summary/"$sampleID"_picard.rmDup.txt TMP_DIR=$ephem/TMP
