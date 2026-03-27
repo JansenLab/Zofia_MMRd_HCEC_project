@@ -1,0 +1,6 @@
+samplename,description,batch,phenotype
+/home/regmars/Scratch/CCS_bcbio_b3/bcbio/input/CCS72_118699GP_R1.fastq.gz,CCS72_GP,CCS_72,normal
+/home/regmars/Scratch/CCS_bcbio_b3/bcbio/input/CCS72_118699GP_R2.fastq.gz,CCS72_GP,CCS_72,normal
+/home/regmars/Scratch/CCS_bcbio_b3/bcbio/input/CCS72118699G_R1.fastq.gz,CCS72_GP,CCS_72,normal
+/home/regmars/Scratch/CCS_bcbio_b3/bcbio/input/CCS72118699G_R2.fastq.gz,CCS72_GP,CCS_72,normal
+

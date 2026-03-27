@@ -1,0 +1,13 @@
+[Parallel(n_jobs=24)]: Using backend LokyBackend with 24 concurrent workers.
+[Parallel(n_jobs=24)]: Done   2 out of  24 | elapsed:    4.4s remaining:   48.4s
+[Parallel(n_jobs=24)]: Done   7 out of  24 | elapsed:    6.1s remaining:   14.7s
+[Parallel(n_jobs=24)]: Done  12 out of  24 | elapsed:    6.6s remaining:    6.6s
+[Parallel(n_jobs=24)]: Done  17 out of  24 | elapsed:    7.7s remaining:    3.2s
+[Parallel(n_jobs=24)]: Done  22 out of  24 | elapsed:    8.5s remaining:    0.8s
+[Parallel(n_jobs=24)]: Done  24 out of  24 | elapsed:    8.8s finished
+[Parallel(n_jobs=14)]: Using backend LokyBackend with 14 concurrent workers.
+[Parallel(n_jobs=14)]: Done   2 out of  14 | elapsed:    3.4s remaining:   20.6s
+[Parallel(n_jobs=14)]: Done   5 out of  14 | elapsed:    3.4s remaining:    6.2s
+[Parallel(n_jobs=14)]: Done   8 out of  14 | elapsed:    3.5s remaining:    2.6s
+[Parallel(n_jobs=14)]: Done  11 out of  14 | elapsed:    3.5s remaining:    0.9s
+[Parallel(n_jobs=14)]: Done  14 out of  14 | elapsed:    3.5s finished
